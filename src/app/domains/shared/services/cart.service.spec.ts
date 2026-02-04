@@ -1,42 +1,15 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { CartService } from './cart.service';
 import { Product } from '@shared/models/product.model';
+import { generateFakeProduct } from '@shared/models/product.mock';
 
 describe('CartService', () => {
   let spectator: SpectatorService<CartService>;
   const createService = createServiceFactory(CartService);
 
-  const productMock: Product = {
-    id: 1,
-    title: 'Test Product',
-    description: 'A product for testing',
-    price: 100,
-    images: [],
-    creationAt: new Date().toISOString(),
-    category: {
-      id: 1,
-      name: 'Test Category',
-      image: '',
-      slug: 'category-slug',
-    },
-    slug: 'test-product',
-  };
+  const productMock: Product = generateFakeProduct({ price: 100 });
 
-  const productMock2: Product = {
-    id: 2,
-    title: 'Second Product',
-    description: 'Another product for testing',
-    price: 50,
-    images: [],
-    creationAt: new Date().toISOString(),
-    category: {
-      id: 2,
-      name: 'Second Category',
-      image: '',
-      slug: 'second-category',
-    },
-    slug: 'second-product',
-  };
+  const productMock2: Product = generateFakeProduct({ price: 50 });
 
   beforeEach(() => {
     spectator = createService();
@@ -92,11 +65,9 @@ describe('CartService', () => {
   });
 
   it('should handle products with zero price', () => {
-    const freeProduct: Product = {
-      ...productMock,
-      id: 3,
+    const freeProduct: Product = generateFakeProduct({
       price: 0,
-    };
+    });
     spectator.service.addToCart(freeProduct);
     expect(spectator.service.cart()).toHaveLength(1);
     expect(spectator.service.total()).toBe(0);
@@ -111,11 +82,9 @@ describe('CartService', () => {
   });
 
   it('should handle adding products with decimal prices', () => {
-    const decimalProduct: Product = {
-      ...productMock,
-      id: 4,
+    const decimalProduct: Product = generateFakeProduct({
       price: 99.99,
-    };
+    });
     spectator.service.addToCart(decimalProduct);
     expect(spectator.service.total()).toBe(99.99);
   });
