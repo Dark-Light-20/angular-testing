@@ -10,6 +10,7 @@ export default {
     '@info/(.*)': '<rootDir>/src/app/domains/info/$1',
     '@env/(.*)': '<rootDir>/src/environments/$1',
   },
+  transformIgnorePatterns: ['node_modules/(?!@faker-js)/'],
   coverageDirectory: './coverage',
   collectCoverageFrom: [
     'src/app/**/*.ts',
