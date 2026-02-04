@@ -25,8 +25,10 @@ export class MetaTagsService {
 
   updateMetaTags(metaData: Partial<PageMetaData>) {
     const metaDataToUpdate = {
-      ...defaultMetaData,
-      ...metaData,
+      title: metaData.title ?? defaultMetaData.title,
+      description: metaData.description ?? defaultMetaData.description,
+      image: metaData.image ?? defaultMetaData.image,
+      url: metaData.url ?? defaultMetaData.url,
     };
 
     const tags = this.generateMetaDefinitions(metaDataToUpdate);
