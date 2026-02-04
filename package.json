@@ -37,6 +37,7 @@
     "@angular/cli": "~19.1.7",
     "@angular/compiler-cli": "^19.1.6",
     "@apphosting/adapter-angular": "^17.2.11",
+    "@ngneat/spectator": "^19.6.2",
     "@types/express": "^4.17.17",
     "@types/jasmine": "~4.3.0",
     "@types/jest": "^30.0.0",
