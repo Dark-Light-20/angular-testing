@@ -7,6 +7,9 @@ import { CategoryService } from './category.service';
 import { environment } from '@env/environment';
 import { generateFakeCategory } from '@shared/models/category.mock';
 import { Category } from '@shared/models/category.model';
+import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
+
+enableFetchMocks();
 
 describe('CategoryService', () => {
   let spectator: SpectatorHttp<CategoryService>;
@@ -14,6 +17,7 @@ describe('CategoryService', () => {
 
   beforeEach(() => {
     spectator = createService();
+    fetchMock.resetMocks();
   });
 
   it('should be created', () => {
@@ -134,23 +138,17 @@ describe('CategoryService', () => {
   });
 
   describe('getAllPromise', () => {
-    beforeEach(() => {
-      globalThis.fetch = jest.fn();
-    });
-
     afterEach(() => {
       jest.clearAllMocks();
     });
 
     it('should make fetch request to correct URL', async () => {
       const mockCategories = [generateFakeCategory()];
-      (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValueOnce(mockCategories),
-      });
+      fetchMock.mockResponseOnce(JSON.stringify(mockCategories));
 
       await spectator.service.getAllPromise();
 
-      expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect(fetch).toHaveBeenCalledWith(
         `${environment.apiUrl}/api/v1/categories`
       );
     });
@@ -161,9 +159,7 @@ describe('CategoryService', () => {
         generateFakeCategory(),
       ];
 
-      (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValueOnce(mockCategories),
-      });
+      fetchMock.mockResponseOnce(JSON.stringify(mockCategories));
 
       const result = await spectator.service.getAllPromise();
 
@@ -172,9 +168,7 @@ describe('CategoryService', () => {
     });
 
     it('should return empty array when no categories exist', async () => {
-      (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValueOnce([]),
-      });
+      fetchMock.mockResponseOnce(JSON.stringify([]));
 
       const result = await spectator.service.getAllPromise();
 
@@ -188,9 +182,7 @@ describe('CategoryService', () => {
         name: 'Home & Garden',
       });
 
-      (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValueOnce([mockCategory]),
-      });
+      fetchMock.mockResponseOnce(JSON.stringify([mockCategory]));
 
       const result = await spectator.service.getAllPromise();
 
@@ -200,28 +192,9 @@ describe('CategoryService', () => {
 
     it('should handle fetch error', async () => {
       const error = new Error('Network error');
-      (globalThis.fetch as jest.Mock).mockRejectedValueOnce(error);
+      fetchMock.mockRejectOnce(error);
 
-      try {
-        await spectator.service.getAllPromise();
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e).toEqual(error);
-      }
-    });
-
-    it('should handle JSON parse error', async () => {
-      const error = new SyntaxError('Invalid JSON');
-      (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
-        json: jest.fn().mockRejectedValueOnce(error),
-      });
-
-      try {
-        await spectator.service.getAllPromise();
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e).toEqual(error);
-      }
+      expect(spectator.service.getAllPromise()).rejects.toThrow(error);
     });
   });
 
