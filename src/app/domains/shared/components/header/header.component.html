@@ -31,6 +31,7 @@
       </a>
       <div
         class="flex-col items-center border rounded-lg absolute top-16 left-3 bg-white p-4 md:relative md:top-0 md:left-0 md:flex md:flex-row md:space-x-4 md:border-none md:p-0"
+        data-testid="header-menu"
         [class.hidden]="!showMenu()">
         <ul
           class="flex flex-col space-y-4 mb-4 md:flex-row md:space-y-0 md:space-x-4 md:mb-0">
@@ -73,9 +74,13 @@
       </div>
     </div>
     <div class="flex items-center">
-      <button class="p-2 border rounded relative" (click)="toogleSideMenu()">
+      <button
+        class="p-2 border rounded relative"
+        data-testid="cart-toggle"
+        (click)="toogleSideMenu()">
         <div
-          class="absolute -top-2 -left-2 rounded h-5 w-5 bg-black text-white text-xs">
+          class="absolute -top-2 -left-2 rounded h-5 w-5 bg-black text-white text-xs"
+          data-testid="cart-count">
           {{ cart().length }}
         </div>
         <svg
@@ -97,6 +102,7 @@
 
 <div
   class="fixed border-l-4 top-0 right-0 bg-red z-40 w-72 h-screen p-4 overflow-y-auto transition-transform bg-white"
+  data-testid="side-menu"
   [class.translate-x-full]="hideSideMenu()">
   <div class="flex justify-between items-center">
     <p class="text-xl">My Cart</p>
@@ -117,7 +123,9 @@
   </div>
   <div class="pt-4 flex flex-col">
     @for (product of cart(); track product) {
-      <div class="flex justify-between items-center space-y-2">
+      <div
+        class="flex justify-between items-center space-y-2"
+        data-testid="cart-item">
         <div class="flex space-x-2 items-center">
           <img
             class="w-6 h-6"
@@ -129,7 +137,7 @@
       </div>
     }
     <div>
-      <p>Total: {{ total() }}</p>
+      <p data-testid="cart-total">Total: {{ total() }}</p>
     </div>
   </div>
 </div>
