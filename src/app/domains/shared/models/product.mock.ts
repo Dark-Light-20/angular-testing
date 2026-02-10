@@ -1,3 +1,4 @@
+import { generateFakeCategory } from './category.mock';
 import { Product } from './product.model';
 import { faker } from '@faker-js/faker';
 
@@ -8,12 +9,7 @@ export const generateFakeProduct = (data: Partial<Product> = {}): Product => ({
   price: Number.parseFloat(faker.commerce.price()),
   images: [faker.image.url(), faker.image.url()],
   creationAt: faker.date.past().toISOString(),
-  category: {
-    id: faker.number.int(),
-    name: faker.commerce.department(),
-    image: faker.image.url(),
-    slug: faker.lorem.slug(),
-  },
+  category: generateFakeCategory(data?.category),
   slug: faker.lorem.slug(),
   ...data,
 });
