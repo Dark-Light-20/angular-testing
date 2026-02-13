@@ -12,6 +12,8 @@ import { of } from 'rxjs';
 import { DeferBlockBehavior } from '@angular/core/testing';
 import { RelatedComponent } from '@products/components/related/related.component';
 import { faker } from '@faker-js/faker';
+import { CartService } from '@shared/services/cart.service';
+import { MetaTagsService } from '@shared/services/meta-tags.service';
 
 globalThis.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
@@ -26,6 +28,7 @@ globalThis.IntersectionObserver = jest.fn(() => ({
 describe('ProductDetailComponent', () => {
   let spectator: Spectator<ProductDetailComponent>;
   let productService: SpyObject<ProductService>;
+  let cartService: SpyObject<CartService>;
 
   const mockProduct = generateFakeProduct({
     images: [
@@ -43,6 +46,8 @@ describe('ProductDetailComponent', () => {
       mockProvider(ProductService, {
         getOneBySlug: jest.fn().mockReturnValue(of(mockProduct)),
       }),
+      mockProvider(CartService),
+      mockProvider(MetaTagsService),
     ],
   });
 
@@ -52,6 +57,7 @@ describe('ProductDetailComponent', () => {
     });
     spectator.setInput('slug', mockProduct.slug);
     productService = spectator.inject(ProductService);
+    cartService = spectator.inject(CartService);
   });
 
   it('should create', () => {
@@ -92,5 +98,15 @@ describe('ProductDetailComponent', () => {
 
     spectator.click(galleryImages![1]);
     expect(coverImg!.src).toBe(mockProduct.images[1]);
+  });
+
+  it('should add product to cart when add to cart button is clicked', () => {
+    spectator.detectChanges();
+    const addToCartButton = spectator.query<HTMLButtonElement>(
+      byTestId('add-to-cart')
+    );
+    expect(addToCartButton).toBeTruthy();
+    spectator.click(addToCartButton!);
+    expect(cartService.addToCart).toHaveBeenCalledWith(mockProduct);
   });
 });
