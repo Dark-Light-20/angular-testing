@@ -16,3 +16,14 @@ try {
     throw error;
   }
 }
+// Mock WaveSurfer globally for all tests
+jest.mock('wavesurfer.js', () => {
+  return {
+    default: {
+      create: jest.fn(() => ({
+        on: jest.fn(),
+        playPause: jest.fn(),
+      })),
+    },
+  };
+});
